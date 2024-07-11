@@ -1,3 +1,35 @@
+//Validation
+
+interface Validatable {
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+function validate(validatableInput: Validatable) {
+  const { value, required, minLength, maxLength, min, max } = validatableInput;
+  let isValid = true;
+  if (required) {
+    isValid = isValid && value.toString().trim().length !== 0;
+  }
+  if (minLength != null && typeof value === "string") {
+    isValid = isValid && value.length >= minLength;
+  }
+  if (maxLength != null && typeof value === "string") {
+    isValid = isValid && value.length <= maxLength;
+  }
+  if (min != null && typeof value === "number") {
+    isValid = isValid && value >= min;
+  }
+  if (max != null && typeof value === "number") {
+    isValid = isValid && value <= max;
+  }
+  return isValid;
+}
+
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostElement: HTMLDivElement;
@@ -36,10 +68,25 @@ class ProjectInput {
     const enterDescription = this.descriptionInputElement.value;
     const enterPeople = this.peopleInputElement.value;
 
+    const titleValidatable: Validatable = {
+      value: enterTitle,
+      required: true,
+    };
+    const descriptionValidatable: Validatable = {
+      value: enterDescription,
+      required: true,
+      minLength: 5,
+    };
+    const peopleValidatable: Validatable = {
+      value: +enterPeople,
+      required: true,
+      min: 1,
+      max: 5,
+    };
     if (
-      enterTitle.trim().length === 0 ||
-      enterDescription.trim().length === 0 ||
-      enterPeople.trim().length === 0
+      !validate(titleValidatable) ||
+      !validate(descriptionValidatable) ||
+      !validate(peopleValidatable)
     ) {
       alert("Incorrect input, please try again!");
       return;
@@ -54,7 +101,6 @@ class ProjectInput {
     this.peopleInputElement.value = "";
   }
 
-  // uywam funkcji strzałkowej zeby nie musiec uzywac metody bind() do powiazania linii 41 z ta metoda
   private submitHandler = (event: Event) => {
     event.preventDefault();
     const userInput = this.gatherUserInput();
@@ -72,4 +118,4 @@ class ProjectInput {
     this.hostElement.insertAdjacentElement("afterbegin", this.element);
   }
 }
-const prjInupt = new ProjectInput();
+const prjInput = new ProjectInput();

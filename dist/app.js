@@ -1,4 +1,24 @@
 "use strict";
+function validate(validatableInput) {
+    const { value, required, minLength, maxLength, min, max } = validatableInput;
+    let isValid = true;
+    if (required) {
+        isValid = isValid && value.toString().trim().length !== 0;
+    }
+    if (minLength != null && typeof value === "string") {
+        isValid = isValid && value.length >= minLength;
+    }
+    if (maxLength != null && typeof value === "string") {
+        isValid = isValid && value.length <= maxLength;
+    }
+    if (min != null && typeof value === "number") {
+        isValid = isValid && value >= min;
+    }
+    if (max != null && typeof value === "number") {
+        isValid = isValid && value <= max;
+    }
+    return isValid;
+}
 class ProjectInput {
     constructor() {
         this.submitHandler = (event) => {
@@ -25,9 +45,24 @@ class ProjectInput {
         const enterTitle = this.titleInputElement.value;
         const enterDescription = this.descriptionInputElement.value;
         const enterPeople = this.peopleInputElement.value;
-        if (enterTitle.trim().length === 0 ||
-            enterDescription.trim().length === 0 ||
-            enterPeople.trim().length === 0) {
+        const titleValidatable = {
+            value: enterTitle,
+            required: true,
+        };
+        const descriptionValidatable = {
+            value: enterDescription,
+            required: true,
+            minLength: 5,
+        };
+        const peopleValidatable = {
+            value: +enterPeople,
+            required: true,
+            min: 1,
+            max: 5,
+        };
+        if (!validate(titleValidatable) ||
+            !validate(descriptionValidatable) ||
+            !validate(peopleValidatable)) {
             alert("Incorrect input, please try again!");
             return;
         }
@@ -47,4 +82,4 @@ class ProjectInput {
         this.hostElement.insertAdjacentElement("afterbegin", this.element);
     }
 }
-const prjInupt = new ProjectInput();
+const prjInput = new ProjectInput();

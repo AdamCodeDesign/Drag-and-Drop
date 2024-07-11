@@ -1,3 +1,4 @@
 {
-  "html.format.wrapLineLength": 200
+  "html.format.wrapLineLength": 200,
+  "cSpell.words": ["Validatable"]
 }

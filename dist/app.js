@@ -2,8 +2,8 @@
 function validate(validatableInput) {
     const { value, required, minLength, maxLength, min, max } = validatableInput;
     let isValid = true;
-    if (required) {
-        isValid = isValid && value.toString().trim().length !== 0;
+    if (required && minLength != null) {
+        isValid = isValid && value.toString().trim().length >= minLength;
     }
     if (minLength != null && typeof value === "string") {
         isValid = isValid && value.length >= minLength;
@@ -18,6 +18,27 @@ function validate(validatableInput) {
         isValid = isValid && value <= max;
     }
     return isValid;
+}
+class ProjectList {
+    constructor(type) {
+        this.type = type;
+        this.templateElement = document.getElementById("project-list");
+        this.hostElement = document.getElementById("app");
+        const importedNode = document.importNode(this.templateElement.content, true);
+        this.element = importedNode.firstElementChild;
+        this.element.id = `${type}-'project'`;
+        this.attach();
+        this.renderContent();
+    }
+    renderContent() {
+        const listId = `${this.type}-project-list`;
+        this.element.querySelector("ul").id = listId;
+        this.element.querySelector("h2").textContent =
+            this.type.toUpperCase() + "PROJECTS";
+    }
+    attach() {
+        this.hostElement.insertAdjacentElement("beforeend", this.element);
+    }
 }
 class ProjectInput {
     constructor() {
@@ -83,3 +104,5 @@ class ProjectInput {
     }
 }
 const prjInput = new ProjectInput();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");
